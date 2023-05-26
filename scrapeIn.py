@@ -6,11 +6,11 @@ import requests
 from bs4 import BeautifulSoup
 
 
-options = webdriver.EdgeOptions()
+options = webdriver.ChromeOptions()
 options.add_experimental_option("detach", True)
 
 options.page_load_strategy = 'normal'
-driver=webdriver.Edge(options=options)
+driver=webdriver.Chrome(options=options)
 driver.get("https://www.linkedin.com/login")
 driver.maximize_window()
 
@@ -65,9 +65,3 @@ for scroll in range (10):
 # Parsing the HTML
 #soup = BeautifulSoup(r.content, 'html.parser')
 #print(soup.prettify())
-
-
-
-
-
-
