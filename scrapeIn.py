@@ -67,7 +67,7 @@ def posts():
     all_post=soup.find_all('div',class_='update-components-text relative feed-shared-update-v2__commentary')
     #all_post=soup.find_all('span',class_='break-words')
     for post in all_post:
-        print(post.text)
+        print(post.text.rstrip())
     
     
     print("\n")
