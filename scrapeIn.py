@@ -85,6 +85,40 @@ def posts():
     profile.append(name)
     profile.append(title)
     return profile"""
+
+
+
+def scrape_posts():
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(random.uniform(2.5, 4.5))
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(random.uniform(2.5, 4.5))
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(random.uniform(2.5, 4.5))
+    soup = BeautifulSoup(driver.page_source, features='lxml')
+
+    posts_data = []
+
+    all_posts = soup.find_all('div', class_='update-components-text relative feed-shared-update-v2__commentary')
+    for post in all_posts:
+        post_text = post.get_text().strip()
+        posts_data.append([post_text])
+
+    return posts_data
+def save_to_csv(data, filename):
+    with open(filename, 'a', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerows(data)
+
+
+def filter_posts(posts_data, keyword):
+    filtered_posts = [post for post in posts_data if keyword.lower() in post[0].lower()]
+    return filtered_posts
+
+
+
+
+
     
 
 
@@ -106,7 +140,23 @@ if __name__ == "__main__":
     print("\n")
 
     #print(employees)
+# Scrape posts
+    posts_data = scrape_posts()
 
+    # Save all posts to CSV file
+    all_posts_csv_file = 'all_posts.csv'
+    save_to_csv(posts_data, all_posts_csv_file)
+
+    # Filter posts containing the keyword 'layoff'
+    keyword = 'layoff'
+    filtered_posts = filter_posts(posts_data, keyword)
+
+    # Save filtered posts to CSV file
+    keyword_posts_csv_file = 'layoff_posts.csv'
+    save_to_csv(filtered_posts, keyword_posts_csv_file)
+
+    print(f"All posts stored in {all_posts_csv_file} file.")
+    print(f"Layoff posts stored in {keyword_posts_csv_file} file.")
 
 
 
