@@ -6,6 +6,33 @@ import time
 from selenium.webdriver.common.by import By
 import requests
 from bs4 import BeautifulSoup
+import csv
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import nltk
+
+
+
+
+
+def analyze_sentiment(text):
+    global x,y,z
+    # Create an instance of the SentimentIntensityAnalyzer
+    analyzer = SentimentIntensityAnalyzer()
+    
+    # Analyze the sentiment of the text
+    sentiment_scores = analyzer.polarity_scores(text)
+    
+    # Extract the compound sentiment score
+    compound_score = sentiment_scores['compound']
+    
+    # Classify the sentiment based on the compound score
+    if compound_score >= 0.05:
+        x+=1
+    elif compound_score <= -0.05:
+        y+=1
+    else:
+        z+=1
+    
 
 
 options = webdriver.ChromeOptions()
@@ -23,13 +50,13 @@ def login():
 
     username=driver.find_element(By.ID,'username')
     #time.sleep(1)
-    username.send_keys('1si20cs020@sit.ac.in')
+    username.send_keys('imashishmahanth0518@gmail.com')
 
     #Enter the password manually
 
     password=driver.find_element(By.ID,'password')
     #time.sleep(1)
-    password.send_keys('save@21myPWD')
+    password.send_keys('Ashish@0518')
 
 
     #Press Enter 
@@ -63,11 +90,12 @@ def posts():
     time.sleep(random.uniform(2.5,4.5))
     soup=BeautifulSoup(driver.page_source,features='lxml')
 
-
+    
     all_post=soup.find_all('div',class_='update-components-text relative feed-shared-update-v2__commentary')
     #all_post=soup.find_all('span',class_='break-words')
     for post in all_post:
         print(post.text.rstrip())
+        
     
     
     print("\n")
@@ -126,7 +154,9 @@ def filter_posts(posts_data, keyword):
 
 
 
-
+x=0
+y=0
+z=0
 if __name__ == "__main__":
     login()
 
@@ -155,8 +185,23 @@ if __name__ == "__main__":
     keyword_posts_csv_file = 'layoff_posts.csv'
     save_to_csv(filtered_posts, keyword_posts_csv_file)
 
+    # Open the CSV file
+with open('layoff_posts.csv', 'r') as file:
+    # Create a CSV reader object
+    reader = csv.reader(file)
+
+    # Iterate over each row in the CSV file
+    for row in reader:
+        # Access individual columns using index
+        column1 = row[0]
+        analyze_sentiment(column1)
+        # ... process the data as needed
+
     print(f"All posts stored in {all_posts_csv_file} file.")
     print(f"Layoff posts stored in {keyword_posts_csv_file} file.")
+    print("Number of posts with postive sentiments",x)
+    print("Number of posts with negative sentiments",y)
+    print("Number of posts with neutral sentiments",z)
 
 
 
